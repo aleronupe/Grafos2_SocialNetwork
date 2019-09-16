@@ -1,0 +1,6 @@
+tokens.py
+__pycache__/
+.vscode/
+data/user_list/*.json
+data/ids/*.json
+

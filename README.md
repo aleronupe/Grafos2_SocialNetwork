@@ -10,20 +10,27 @@
 | 16/0121612  |  Gabriela Guedes |
 
 ## Sobre 
-Descreva os objetivos do seu projeto e como ele funciona. 
+Estudo do Grafo montado a partir de quem o usuário segue no Twitter e, quais desses, se seguem entre si. O projeto tem o objetivo de indentificar nucleos mais conectados e análisar o grafo a partir dos métodos estudados.
 
-## Screenshots
-Adicione 3 ou mais screenshots do projeto em funcionamento.
+<!-- ## Screenshots
+Adicione 3 ou mais screenshots do projeto em funcionamento. -->
 
 ## Instalação 
-**Linguagem**: Python<br>
-Descreva os pré-requisitos para rodar o seu projeto e os comandos necessários.
+**Linguagem**: Python 3<br>
+É necessário ter python 3 instalado e as seguintes bibliotecas:
+- plotly
+- networkx
+- requests
+- json
 
 ## Uso 
-Explique como usar seu projeto caso haja algum passo a passo após o comando de execução.
+Para rodar o projeto é necessário ter uma conta no twitter cadastrada como [desenvolvedor](https://developer.twitter.com). No site do twitter developer é necessário criar um App e gerar os tokens: API key e API secret key.
+Crie um arquivo `tokens.py` seguindo o exemplo de `example_tokens.py` e coloque os tokens criados nos locais indicados.
 
-## Outros 
-Quaisquer outras informações sobre seu projeto podem ser descritas abaixo.
+**Para rodar o projeto:**
+```sh
+python twitterGraph.py
+```
 
 
 

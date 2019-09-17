@@ -188,7 +188,7 @@ def get_user_graph_id(username, G):
             return i
     return -1
 
-def breadth_first_search(username):
+def breadth_first_search(G, username):
     nodes = G.nodes(data=True)
     origin = get_user_graph_id(username, G)
     size = len(nodes)
@@ -222,6 +222,48 @@ def breadth_first_search(username):
     
     return node_colors
 
+
+def prepare_dfs(G, username):
+    nodes = G.nodes(data=True)
+    node_colors = []
+    size = len(nodes)
+    for n in range(size):
+        if(n == origin):
+            node_colors.append("blue")
+        elif(nodes[n]['visited'] == True):
+            node_colors.append("red")
+        else:
+            node_colors.append("green")
+    return node_colors
+
+def depth_first_search(G, username, tree):
+    nodes = G.nodes(data=True)
+    origin = get_user_graph_id(username, G)
+    size = len(nodes)
+
+    if (origin == -1):
+        return tree
+
+    nodes[origin]['visited'] = True
+    adjacents = list(G.adj[origin])
+    print(adjacents)
+    return
+    # for init_pos in path:
+    #     nodes[init_pos]['visited'] = True
+    #     G.edges[origin, init_pos]['traveled'] = True
+    #     G.edges[origin, init_pos]['layer'] = 1
+    # for pos in path:
+    #     neighbours = list(G.adj[pos])
+    #     for n_pos in neighbours:
+    #         if(nodes[n_pos]['visited']):
+    #             if(G.edges[origin, init_pos]['layer'] == 0):
+    #                 G.edges[origin, init_pos]['layer'] = 2
+    #         else:
+    #             path.append(n_pos)
+    #             nodes[n_pos]['visited'] = True
+    #             G.edges[pos, n_pos]['traveled'] = True
+    #             G.edges[pos, n_pos]['layer'] = 1
+    
 
         
 

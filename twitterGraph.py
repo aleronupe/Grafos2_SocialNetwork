@@ -52,11 +52,13 @@ def create_di_graph(vec, user):
 
     # G = nx.DiGraph()
     G = nx.Graph()
+    DiG = nx.MultiDiGraph()
 
     for i in range(0,len(vec)):
         G.add_node(i, name=vec[i]['name'], id=vec[i]['id'], username=vec[i]['screen_name'], visited=False)
+        DiG.add_node(i, name=vec[i]['name'], id=vec[i]['id'], username=vec[i]['screen_name'], visited=False)
 
-    nodes = G.nodes(data=True)
+    nodes = DiG.nodes(data=True)
     for out_node in nodes:
         username = str(out_node[1]['username'])
         print(username)
@@ -65,18 +67,19 @@ def create_di_graph(vec, user):
             for friend_id in related_friends:
                 if(friend_id == node[1]['id']):
                     G.add_edge(out_node[0], node[0], layer=0, traveled=False)
+                    DiG.add_edge(out_node[0], node[0], layer=0, traveled=False)
 
     title = 'Grafo de quem ' + user + ' segue no Twitter'
-    return show_graph(G, title)
+    return show_graph(G, DiG, title)
 
-def show_graph(G, text, colors = []):
+def show_graph(G, DiG, text, colors = []):
 
     pos = nx.fruchterman_reingold_layout(G)
 
     # G = G.to_directed()
     edge_x = []
     edge_y = []
-    for e in G.edges():
+    for e in DiG.edges():
         edge_x.extend([pos[e[0]][0], pos[e[1]][0], None])
         edge_y.extend([pos[e[0]][1], pos[e[1]][1], None])
 
@@ -122,9 +125,9 @@ def show_graph(G, text, colors = []):
 
     node_adjacencies = []
     node_text = []
-    for node, adjacencies in enumerate(G.adjacency()):
+    for node, adjacencies in enumerate(DiG.adjacency()):
         node_adjacencies.append(len(adjacencies[1]))
-        node_text.append(G.nodes[node]['name'] + ' \n@' + G.nodes[node]['username'])
+        node_text.append(DiG.nodes[node]['name'] + ' \n@' + DiG.nodes[node]['username'])
 
     if len(colors) > 0:
         node_trace.marker.color = colors
@@ -148,6 +151,31 @@ def show_graph(G, text, colors = []):
                             showticklabels=False),
                     yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                     )
+
+    print('\033[1m' + 'Wictão' + '\033[0m')
+    for i in range(0, len(DiG)):
+        if DiG.nodes[i]['username'] == 'GirardiWictor':
+            iterator = DiG.neighbors(i)
+            for item in iterator:
+                print(DiG.nodes[item]['username'])
+    print(' ')
+
+    print('\033[1m' + 'Ganda' + '\033[0m')
+    for i in range(0, len(DiG)):
+        if DiG.nodes[i]['username'] == 'ganda_lc':
+            iterator = DiG.neighbors(i)
+            for item in iterator:
+                print(DiG.nodes[item]['username'])
+
+    print(' ')
+            
+    print('\033[1m' + 'Andrézin' + '\033[0m')
+    for i in range(0, len(DiG)):
+        if DiG.nodes[i]['username'] == 'AGameplayz':
+            iterator = DiG.neighbors(i)
+            for item in iterator:
+                print(DiG.nodes[item]['username'])
+
     fig.show()
     return G
 

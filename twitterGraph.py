@@ -46,10 +46,11 @@ def mount_graph():
     for famous in verified:
         friends.remove(famous)
 
-    return create_graph(friends, user)
+    return create_di_graph(friends, user)
 
-def create_graph(vec, user):
+def create_di_graph(vec, user):
 
+    # G = nx.DiGraph()
     G = nx.Graph()
 
     for i in range(0,len(vec)):
@@ -72,6 +73,7 @@ def show_graph(G, text, colors = []):
 
     pos = nx.fruchterman_reingold_layout(G)
 
+    # G = G.to_directed()
     edge_x = []
     edge_y = []
     for e in G.edges():
@@ -200,31 +202,5 @@ def breadth_first_search(username):
 if __name__ == "__main__":
     create_barear_token()
     G = mount_graph()
-    ##########################
-    # print('Find the shortest path between two users:')
-    # usr1 = input('From: ')
-    # usr2 = input('To: ')
-    # id1 = get_user_graph_id(usr1, G)
-    # id2 = get_user_graph_id(usr2, G)
-    
 
 
-    # if(not (id1 == -1) and  not (id2 == -1)):
-    #     path = search_path(id1, id2, G)
-
-    #     print('\nO menor caminho:')
-    #     for id in path:
-    #         print(G.nodes[id]['name'])
-
-    #     node_colors = ["blue" if n in path else "red" for n in G.nodes()]
-    #     title = 'Menor caminho entre ' + G.nodes[id1]['name'] + ' e ' + G.nodes[id2]['name']
-    #     show_graph(G, title , node_colors)
-    # else:
-    #     print('username incorreto')
-    #############################
-
-
-    usr3 = input('Perform Breadth First Search from user (use name without @): ')
-    node_colors = breadth_first_search(usr3)
-    title = 'Busca por Largura começando em ' + usr3
-    show_graph(G, title , node_colors)

@@ -7,7 +7,7 @@
 |Matrícula | Aluno |
 | -- | -- |
 | 16/0000840  |  Alexandre Miguel |
-| 16/01xxxx  |  Gabriela Guedes |
+| 16/0121612  |  Gabriela Guedes |
 
 ## Sobre 
 Descreva os objetivos do seu projeto e como ele funciona. 

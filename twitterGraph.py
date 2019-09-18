@@ -3,8 +3,8 @@ import random
 import networkx as nx
 import os
 from collections import deque
-
 from twitterRequests import *
+import heapq
 
 def get_user_list(username):
     file_path = 'data/user_list/' + username + '.json'
@@ -223,7 +223,7 @@ def show_graph(G, DiG, text, colors = [], path = []):
 
 
 
-    # fig.show()
+    fig.show()
     return DiG
 
 def search_path(from_user, to_user, G):
@@ -308,30 +308,67 @@ def prepare_dfs(G, username):
     return node_colors, stack
 
 def create_multidi_graph(vec, username):
-    print(vec)
+    # print(vec)
     DiG = nx.MultiDiGraph()
     G = nx.Graph()
     size = len(vec)
     
-
     for i in range(0,size):
-        DiG.add_node(i, id=vec[i][0])
-        G.add_node(i, id=vec[i][0])
+        DiG.add_node(i, id=vec[i][0], name=vec[i][1], username=vec[i][2], visited=False)
+        G.add_node(i, id=vec[i][0], name=vec[i][1], username=vec[i][2], visited=False)
         
 
     nodes = DiG.nodes(data=True)
-    print(nodes)
     for i in range(0,size):
-        adj_set = vec[i][1]
+        adj_set = vec[i][3]
         for j in range(0, size):
             if nodes[j]['id'] in adj_set:
-                G.add_edge(nodes[i][0], nodes[j][0], weight=1)
-                DiG.add_edge(nodes[i][0], nodes[j][0], weight=1)
+                G.add_edge(i, j, weight=1)
+                DiG.add_edge(i, j, weight=1)
                     
-    title = 'Inner circle de' + username
-    return show_graph(G, DiG, title)
+    # title = 'Inner circle de' + username
+    # return show_graph(G, DiG, title)
+    return DiG
 
-# def djikstra(G, origin):
+# def djikstra(G, username):
+#     print('Function')
+#     nodes = G.nodes(data=True)
+#     origin = get_user_graph_id(username, G)
+#     non_visited = [G.nodes[origin]]
+#     heap = []
+#     final = []
+#     # head = list(G.adj[origin])
+#     # head = head[0]
+#     # print(nodes[head]['id'])
+
+#     # for node in nodes:
+#     #     print(node)
+#     #     if nodes[head]['id'] == node[1]['id']:
+#     #         final.append((nodes[head], G.edges[origin, node[0], 0]['weight']))
+#     #         non_visited.append((G.edges[origin, node[0], 0]['weight'], nodes[head]))
+#     #     elif node[1]['id'] != nodes[origin]['id']:
+#     #         non_visited.append((float('inf'), node))
+#     #         control.append((node, float('inf')))
+
+#     for node in nodes:
+#         if node[1]['id'] == nodes[origin]['id']:
+#             heap.append((0, node))
+#         else:
+#             heap.append((float('inf'), node))    
+
+#     while heap:
+#         neighbours = list(G.adj[heap[0]])
+#         for pos in neighbours:
+#             if(heap[pos][0])
+
+
+
+#     heapq.heapify(heap)
+#     print(heap)
+#     return
+
+    
+
 
 
 
@@ -339,7 +376,7 @@ def inner_circle(G, username):
     node_colors, stack = prepare_dfs(G, username)
     origin = get_user_graph_id(username, G)
     adjacents = set(G.adj[origin])
-
+    inner_circle = []
     containers = []
     removals = []
 
@@ -356,16 +393,61 @@ def inner_circle(G, username):
     #Elementos que o nó de origem segue
     for elmnt in adjacents:
         in_adjacents = set(G.adj[elmnt]) #Usuários que o amigos do Origem seguem
-        print(str(elmnt) + ': ' + G.nodes[elmnt]['username'])
-        print(in_adjacents)
+        # print(str(elmnt) + ': ' + G.nodes[elmnt]['username'])
+        # print(in_adjacents)
         elmnt_following = in_adjacents.intersection(adjacents) # Interseção entre quem Origem segue e quem o amigo de origem segue
-        containers.append((elmnt, elmnt_following))
+        elmnt_following.add(elmnt)
+        # containers.append((elmnt, G.nodes[elmnt]['name'], G.nodes[elmnt]['username'], elmnt_following))
+        containers.append( (elmnt, elmnt_following) )
+    flag = True
 
-    
-    what = create_multidi_graph(containers, username)
+    # print(containers)
 
-    return
+    while flag:
+        heap = []
+        for elmnt in adjacents:
+            cont = 0
+            for element in containers:
+                if(elmnt in element[1]):
+                    cont = cont + 1
+            heap.append((cont, elmnt))
+        heapq.heapify(heap)
+        print('Heap')
+        print(heap)
+        if heap[0][0] < len(adjacents):
+            small = heapq.heappop(heap)
+            adjacents.remove(small[1])
+        else:
+            flag = False
 
+    for n in adjacents:
+        node_colors[n] = "yellow"
+
+    return adjacents, node_colors
+
+
+    # size_adj = len(adjacents)
+    # size_cont = len(containers)
+    # heap = []
+
+
+    # for pos_adj in range(0, size_adj):
+    #     cont = 0
+    #     for pos_cont in range(0, size_cont):
+    #         if not(adjacents[pos_adj] in containers[pos_cont][3]):
+    #             cont = cont + 1
+    #     heap.append(cont, adjacents[pos_adj])
+
+    # heapq.heapify(heap)
+    # flag = True
+    # while flag:
+    #     for element in heap:
+            
+        
+
+
+
+   
 
     
 
@@ -381,8 +463,11 @@ if __name__ == "__main__":
     title = 'Busca por Profundidade começando em ' + usr
     # for element in stack:
     #     print(G.nodes[element]['username'])
-    # show_graph(G, DiG, title, node_colors)
-    inner_circle(DiG, usr)
+    
+    adjacents, node_colors = inner_circle(DiG, usr)
+    print(adjacents)
+    print(node_colors)
+    show_graph(G, DiG, title, node_colors)
     
 
 #4062018375

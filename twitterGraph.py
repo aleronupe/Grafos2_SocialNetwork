@@ -28,7 +28,6 @@ def get_ids_list(username):
             data = json.load(json_file)
     else:
         data, rate_limit = get_ids(username, 'friends')
-        print(rate_limit)
         if not rate_limit:
             with open(file_path, 'w') as outfile:
                 json.dump(data, outfile)
@@ -50,7 +49,6 @@ def mount_graph():
 
 def create_di_graph(vec, user):
 
-    # G = nx.DiGraph()
     G = nx.Graph()
     DiG = nx.MultiDiGraph()
 
@@ -69,14 +67,12 @@ def create_di_graph(vec, user):
                     DiG.add_edge(out_node[0], node[0], layer=0, traveled=False)
                 
 
-    title = 'Grafo de quem ' + user + ' segue no Twitter'
+    title = 'Graph of who ' + user + ' follows on Twitter'
     return show_graph(G, DiG, title), G
 
 def show_graph(G, DiG, text, colors = [], path = []):
 
     pos = nx.fruchterman_reingold_layout(G)
-
-    # G = G.to_directed()
     edge_x = []
     edge_y = []
     for e in DiG.edges():
@@ -86,14 +82,13 @@ def show_graph(G, DiG, text, colors = [], path = []):
 
     p_edge_x = []
     p_edge_y = []
-    for i in range(0, len(path) - 1):
-        edge = (path[i], path[i+1])
-        p_edge_x.extend([pos[edge[0]][0], pos[edge[1]][0], None])
-        p_edge_y.extend([pos[edge[0]][1], pos[edge[1]][1], None])
+    for edge in path:
+        p_edge_x.extend([pos[edge[0]][0], pos[edge[1]][0], True])
+        p_edge_y.extend([pos[edge[0]][1], pos[edge[1]][1], False])
 
     edge_trace1 = go.Scatter(
         x=p_edge_x, y=p_edge_y,
-        line=dict(width=1, color='#0F0'),
+        line=dict(width=3, color='yellow'),
         hoverinfo='none',
         mode='lines')
 
@@ -112,10 +107,6 @@ def show_graph(G, DiG, text, colors = [], path = []):
         hoverinfo='text',
         marker=dict(
             showscale=True,
-            # colorscale options
-            #'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
-            #'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
-            #'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
             colorscale='YlGnBu',
             reversescale=True,
             color=colors,
@@ -148,7 +139,7 @@ def show_graph(G, DiG, text, colors = [], path = []):
                     hovermode='closest',
                     margin=dict(b=20, l=5, r=5, t=40),
                     annotations=[dict(
-                        text="Feito por Alexandre Miguel e Gabriela Guedes",
+                        text="Made by Alexandre Miguel and Gabriela Guedes",
                         showarrow=False,
                         xref="paper", yref="paper",
                         x=0.005, y=-0.002)],
@@ -156,72 +147,6 @@ def show_graph(G, DiG, text, colors = [], path = []):
                             showticklabels=False),
                     yaxis=dict(showgrid=False, zeroline=False, showticklabels=False))
                     )
-
-    # print('\033[1m' + 'Wictão' + '\033[0m')
-    # for i in range(0, len(DiG)):
-    #     if DiG.nodes[i]['username'] == 'GirardiWictor':
-    #         iterator = DiG.neighbors(i)
-    #         for item in iterator:
-    #             print(DiG.nodes[item]['username'])
-    # print(' ')
-
-    # print('\033[1m' + 'Ganda' + '\033[0m')
-    # for i in range(0, len(DiG)):
-    #     if DiG.nodes[i]['username'] == 'ganda_lc':
-    #         iterator = DiG.neighbors(i)
-    #         for item in iterator:
-    #             print(DiG.nodes[item]['username'])
-
-    # print(' ')
-            
-    # print('\033[1m' + 'Andrézin' + '\033[0m')
-    # for i in range(0, len(DiG)):
-    #     if DiG.nodes[i]['username'] == 'AGameplayz':
-    #         iterator = DiG.neighbors(i)
-    #         for item in iterator:
-    #             print(DiG.nodes[item]['username'])
-
-    # print('\033[1m' + 'Leandro' + '\033[0m')
-    # for i in range(0, len(DiG)):
-    #     if DiG.nodes[i]['username'] == 'Leandro_gpaiva':
-    #         iterator = DiG.neighbors(i)
-    #         for item in iterator:
-    #             other = DiG.neighbors(item)
-    #             print(DiG.nodes[item]['username'])
-    #             for bitch in other:
-    #                 if bitch == i:
-    #                 print('Segue de volta')
-                
-
-    # print('\n' + 'REVERSE' + '\n')
-
-    # Rev = DiG.reverse()
-
-    # print('\033[1m' + 'Wictão' + '\033[0m')
-    # for i in range(0, len(Rev)):
-    #     if Rev.nodes[i]['username'] == 'GirardiWictor':
-    #         iterator = Rev.neighbors(i)
-    #         for item in iterator:
-    #             print(Rev.nodes[item]['username'])
-    # print(' ')
-
-    # print('\033[1m' + 'Ganda' + '\033[0m')
-    # for i in range(0, len(Rev)):
-    #     if Rev.nodes[i]['username'] == 'ganda_lc':
-    #         iterator = Rev.neighbors(i)
-    #         for item in iterator:
-    #             print(Rev.nodes[item]['username'])
-
-    # print(' ')
-            
-    # print('\033[1m' + 'Andrézin' + '\033[0m')
-    # for i in range(0, len(Rev)):
-    #     if Rev.nodes[i]['username'] == 'AGameplayz':
-    #         iterator = Rev.neighbors(i)
-    #         for item in iterator:
-    #             print(Rev.nodes[item]['username'])
-
-
 
     fig.show()
     return DiG
@@ -326,51 +251,7 @@ def create_multidi_graph(vec, username):
                 G.add_edge(i, j, weight=1)
                 DiG.add_edge(i, j, weight=1)
                     
-    # title = 'Inner circle de' + username
-    # return show_graph(G, DiG, title)
     return DiG
-
-# def djikstra(G, username):
-#     print('Function')
-#     nodes = G.nodes(data=True)
-#     origin = get_user_graph_id(username, G)
-#     non_visited = [G.nodes[origin]]
-#     heap = []
-#     final = []
-#     # head = list(G.adj[origin])
-#     # head = head[0]
-#     # print(nodes[head]['id'])
-
-#     # for node in nodes:
-#     #     print(node)
-#     #     if nodes[head]['id'] == node[1]['id']:
-#     #         final.append((nodes[head], G.edges[origin, node[0], 0]['weight']))
-#     #         non_visited.append((G.edges[origin, node[0], 0]['weight'], nodes[head]))
-#     #     elif node[1]['id'] != nodes[origin]['id']:
-#     #         non_visited.append((float('inf'), node))
-#     #         control.append((node, float('inf')))
-
-#     for node in nodes:
-#         if node[1]['id'] == nodes[origin]['id']:
-#             heap.append((0, node))
-#         else:
-#             heap.append((float('inf'), node))    
-
-#     while heap:
-#         neighbours = list(G.adj[heap[0]])
-#         for pos in neighbours:
-#             if(heap[pos][0])
-
-
-
-#     heapq.heapify(heap)
-#     print(heap)
-#     return
-
-    
-
-
-
 
 def inner_circle(G, username):
     node_colors, stack = prepare_dfs(G, username)
@@ -393,15 +274,11 @@ def inner_circle(G, username):
     #Elementos que o nó de origem segue
     for elmnt in adjacents:
         in_adjacents = set(G.adj[elmnt]) #Usuários que o amigos do Origem seguem
-        # print(str(elmnt) + ': ' + G.nodes[elmnt]['username'])
-        # print(in_adjacents)
+
         elmnt_following = in_adjacents.intersection(adjacents) # Interseção entre quem Origem segue e quem o amigo de origem segue
         elmnt_following.add(elmnt)
-        # containers.append((elmnt, G.nodes[elmnt]['name'], G.nodes[elmnt]['username'], elmnt_following))
         containers.append( (elmnt, elmnt_following) )
     flag = True
-
-    # print(containers)
 
     while flag:
         heap = []
@@ -412,9 +289,8 @@ def inner_circle(G, username):
                     cont = cont + 1
             heap.append((cont, elmnt))
         heapq.heapify(heap)
-        print('Heap')
-        print(heap)
-        if heap[0][0] < len(adjacents):
+
+        if len(heap) > 0 and heap[0][0] < len(adjacents):
             small = heapq.heappop(heap)
             adjacents.remove(small[1])
         else:
@@ -426,48 +302,30 @@ def inner_circle(G, username):
     return adjacents, node_colors
 
 
-    # size_adj = len(adjacents)
-    # size_cont = len(containers)
-    # heap = []
+def show_little_pan(G, DiG, title, node_colors, usr, adj):
+    usr_id = get_user_graph_id(usr, DiG)
+    little_pan = [usr_id, *adj]
+    path = []
+    for i in range(0, len(little_pan)-1):
+        for j in range(i + 1, len(little_pan)):
+            path.append((little_pan[i], little_pan[j]))
 
-
-    # for pos_adj in range(0, size_adj):
-    #     cont = 0
-    #     for pos_cont in range(0, size_cont):
-    #         if not(adjacents[pos_adj] in containers[pos_cont][3]):
-    #             cont = cont + 1
-    #     heap.append(cont, adjacents[pos_adj])
-
-    # heapq.heapify(heap)
-    # flag = True
-    # while flag:
-    #     for element in heap:
-            
-        
-
-
-
-   
-
-    
-
-        
-
-
+    show_graph(G, DiG, title, node_colors, path)
 
 if __name__ == "__main__":
     create_barear_token()
     DiG, G = mount_graph()
-    usr = input('Perform Depth First Search from user (use name without @): ')
-    node_colors, stack = prepare_dfs(DiG, usr)
-    title = 'Busca por Profundidade começando em ' + usr
-    # for element in stack:
-    #     print(G.nodes[element]['username'])
-    
-    adjacents, node_colors = inner_circle(DiG, usr)
-    print(adjacents)
-    print(node_colors)
-    show_graph(G, DiG, title, node_colors)
-    
+    usr = ''
+    print('\nTo exit the program write EXIT on the username field.\n')
+    usr = input('\nPerform Depth First Search from user: @')
 
-#4062018375
+    while (usr != 'exit') and (usr != 'EXIT'):
+        try:
+            node_colors, stack = prepare_dfs(DiG, usr)
+            title = 'Depth-First Search starting on ' + usr
+            adjacents, node_colors = inner_circle(DiG, usr)
+            show_little_pan(G, DiG, title, node_colors, usr, adjacents)
+        except KeyError:
+            print('\nUsername not found!\n')
+
+        usr = input('\nPerform Depth First Search from user: @')
